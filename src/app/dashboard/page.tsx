@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Meal } from "@/src/types/meal";
-import { getMeals } from "@/src/lib/storage";
-
+import { getMeals, deleteMeal, clearMeals } from "@/src/lib/storage";
 import Navbar from "@/src/components/dashboard/Navbar";
 import Sidebar from "@/src/components/dashboard/Sidebar";
 import { dashboardStats, recentMeals } from "@/src/lib/mock-data";
@@ -11,9 +10,32 @@ import RecentMealCard from "@/src/components/dashboard/RecentMealCard";
 
 export default function DashboardPage() {
   const [meals, setMeals] = useState<Meal[]>([]);
+
   useEffect(() => {
     setMeals(getMeals());
   }, []);
+  
+  const loadMeals = () => setMeals(getMeals());
+
+  useEffect(() => {
+    loadMeals();
+  }, []);
+
+  const handleDelete = (id: number) => {
+    const confirmDelete = confirm("Delete this meal?");
+    if (!confirmDelete) return;
+
+    deleteMeal(id);
+    loadMeals();
+  };
+
+  const handleClearAll = () => {
+    const confirmClear = confirm("Clear all meals?");
+    if (!confirmClear) return;
+
+    clearMeals();
+    loadMeals();
+  };
 
   return (
     <div>
@@ -31,18 +53,34 @@ export default function DashboardPage() {
               />
             ))}
           </div>
-          
+
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Recent Meals</h2>
-
+            {meals.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                className="border rounded-lg px-4 py-2"
+              >
+                Clear All
+              </button>
+            )}
             {meals.length === 0 ? (
-              <p>No meals added yet</p>
-            ) : (
-              <div className="space-y-4">
-                {meals.map((meal) => (
-                  <RecentMealCard key={meal.id} meal={meal} />
-                ))}
+              <div className="rounded-2xl border border-dashed p-8 text-center">
+                <p className="text-lg font-medium">No meals added yet 🍱</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Upload your first meal to start tracking
+                </p>
               </div>
+            ) : (
+                <div className="space-y-4">
+                  {meals.map((meal) => (
+                    <RecentMealCard
+                      key={meal.id}
+                      meal={meal}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
             )}
           </div>
 
