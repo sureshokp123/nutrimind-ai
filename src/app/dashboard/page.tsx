@@ -1,6 +1,8 @@
 import Navbar from "@/src/components/dashboard/Navbar";
 import Sidebar from "@/src/components/dashboard/Sidebar";
+import { dashboardStats, recentMeals } from "@/src/lib/mock-data";
 import StatCard from "@/src/components/dashboard/StatCard";
+import RecentMealCard from "@/src/components/dashboard/RecentMealCard";
 
 export default function DashboardPage() {
   return (
@@ -11,10 +13,32 @@ export default function DashboardPage() {
         <div className="flex-1 p-8">
           <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
           <div className="grid md:grid-cols-3 gap-4">
-            <StatCard title="Calories" value="1200 kcal" />
-            <StatCard title="Protein" value="85 g" />
-            <StatCard title="Water" value="2.5 L" />
+            {dashboardStats.map((stat) => (
+              <StatCard
+                key={stat.title}
+                title={stat.title}
+                value={stat.value}
+              />
+            ))}
           </div>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Recent Meals</h2>
+            <div className="space-y-4">
+              {recentMeals.map((meal) => (
+                <RecentMealCard key={meal.id} meal={meal} />
+              ))}
+            </div>
+          </div>
+          <div className="mt-8 rounded-2xl border p-6">
+            <h2 className="text-xl font-bold mb-4">Daily Goal Progress</h2>
+            <div className="w-full bg-gray-200 rounded-full h-4">
+              <div className="bg-black h-4 rounded-full w-3/4"></div>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              75% of calorie goal completed
+            </p>
+          </div>
+
         </div>
       </div>
     </div>
