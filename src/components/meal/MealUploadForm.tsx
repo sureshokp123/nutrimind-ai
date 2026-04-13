@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveMeal } from "@/src/lib/storage";
 
 export default function MealUploadForm() {
   const [mealName, setMealName] = useState("");
@@ -16,26 +17,32 @@ export default function MealUploadForm() {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!mealName || !calories) {
-      alert("Meal name and calories are required");
-      return;
-    }
+  if (!mealName || !calories) {
+    alert("Meal name and calories are required");
+    return;
+  }
 
-    console.log({
-      mealName,
-      calories,
-      protein,
-      image,
-    });
-
-    setMealName("");
-    setCalories("");
-    setProtein("");
-    setImage(null);
-    setPreview("");
+  const meal = {
+    id: Date.now(),
+    name: mealName,
+    calories: Number(calories),
+    protein: Number(protein),
+    time: new Date().toLocaleTimeString(),
   };
+
+  saveMeal(meal);
+
+  setMealName("");
+  setCalories("");
+  setProtein("");
+  setImage(null);
+  setPreview("");
+
+  alert("Meal saved successfully");
+};
+
 
   return (
     <form

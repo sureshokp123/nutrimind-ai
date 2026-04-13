@@ -1,3 +1,8 @@
+"use client";
+import { useEffect, useState } from "react";
+import { Meal } from "@/src/types/meal";
+import { getMeals } from "@/src/lib/storage";
+
 import Navbar from "@/src/components/dashboard/Navbar";
 import Sidebar from "@/src/components/dashboard/Sidebar";
 import { dashboardStats, recentMeals } from "@/src/lib/mock-data";
@@ -5,6 +10,11 @@ import StatCard from "@/src/components/dashboard/StatCard";
 import RecentMealCard from "@/src/components/dashboard/RecentMealCard";
 
 export default function DashboardPage() {
+  const [meals, setMeals] = useState<Meal[]>([]);
+  useEffect(() => {
+    setMeals(getMeals());
+  }, []);
+
   return (
     <div>
       <Navbar />
@@ -21,14 +31,21 @@ export default function DashboardPage() {
               />
             ))}
           </div>
+          
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Recent Meals</h2>
-            <div className="space-y-4">
-              {recentMeals.map((meal) => (
-                <RecentMealCard key={meal.id} meal={meal} />
-              ))}
-            </div>
+
+            {meals.length === 0 ? (
+              <p>No meals added yet</p>
+            ) : (
+              <div className="space-y-4">
+                {meals.map((meal) => (
+                  <RecentMealCard key={meal.id} meal={meal} />
+                ))}
+              </div>
+            )}
           </div>
+
           <div className="mt-8 rounded-2xl border p-6">
             <h2 className="text-xl font-bold mb-4">Daily Goal Progress</h2>
             <div className="w-full bg-gray-200 rounded-full h-4">
