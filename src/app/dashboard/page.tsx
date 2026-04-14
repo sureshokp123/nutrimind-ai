@@ -7,9 +7,26 @@ import Sidebar from "@/src/components/dashboard/Sidebar";
 import { dashboardStats, recentMeals } from "@/src/lib/mock-data";
 import StatCard from "@/src/components/dashboard/StatCard";
 import RecentMealCard from "@/src/components/dashboard/RecentMealCard";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/src/lib/supabase";
 
 export default function DashboardPage() {
   const [meals, setMeals] = useState<Meal[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    async function checkUser() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/login");
+      }
+    }
+
+    checkUser();
+  }, []);
 
   useEffect(() => {
     setMeals(getMeals());
