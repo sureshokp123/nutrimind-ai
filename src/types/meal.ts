@@ -3,5 +3,6 @@ export interface Meal {
   name: string;
   calories: number;
   protein: number;
+  image_url?: string;
   time: string;
 }

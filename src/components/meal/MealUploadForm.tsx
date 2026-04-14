@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { saveMeal } from "@/src/lib/storage";
+// import { saveMeal } from "@/src/lib/storage";
 import { useRouter } from "next/navigation";
+import { saveMealToDB } from "@/src/lib/mealService";
+import { uploadMealImage } from "@/src/lib/storageService";
 
 export default function MealUploadForm() {
     const [mealName, setMealName] = useState("");
@@ -18,34 +20,53 @@ export default function MealUploadForm() {
         setPreview(URL.createObjectURL(file));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!mealName || !calories) {
-            alert("Meal name and calories are required");
-            return;
+        let imageUrl = "";
+
+        if (image) {
+            imageUrl = await uploadMealImage(image);
         }
 
-        const meal = {
-            id: Date.now(),
+        await saveMealToDB({
             name: mealName,
             calories: Number(calories),
             protein: Number(protein),
-            time: new Date().toLocaleTimeString(),
-        };
+            image_url: imageUrl,
+        });
 
-        saveMeal(meal);
-
-        setMealName("");
-        setCalories("");
-        setProtein("");
-        setImage(null);
-        setPreview("");
-        
         router.push("/dashboard");
-
-        alert("Meal saved successfully");
     };
+
+    // const handleSubmit = (e: React.FormEvent) => {
+    //     e.preventDefault();
+
+    //     if (!mealName || !calories) {
+    //         alert("Meal name and calories are required");
+    //         return;
+    //     }
+
+    //     const meal = {
+    //         id: Date.now(),
+    //         name: mealName,
+    //         calories: Number(calories),
+    //         protein: Number(protein),
+    //         time: new Date().toLocaleTimeString(),
+    //     };
+
+    //     saveMeal(meal);
+
+    //     setMealName("");
+    //     setCalories("");
+    //     setProtein("");
+    //     setImage(null);
+    //     setPreview("");
+        
+    //     router.push("/dashboard");
+
+    //     alert("Meal saved successfully");
+    // };
 
 
     return (

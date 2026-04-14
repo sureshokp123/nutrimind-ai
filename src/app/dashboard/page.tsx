@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Meal } from "@/src/types/meal";
-import { getMeals, deleteMeal, clearMeals } from "@/src/lib/storage";
+// import { getMeals, deleteMeal, clearMeals } from "@/src/lib/storage";
 import Navbar from "@/src/components/dashboard/Navbar";
 import Sidebar from "@/src/components/dashboard/Sidebar";
 import { dashboardStats, recentMeals } from "@/src/lib/mock-data";
@@ -9,6 +9,7 @@ import StatCard from "@/src/components/dashboard/StatCard";
 import RecentMealCard from "@/src/components/dashboard/RecentMealCard";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/src/lib/supabase";
+import { clearAllMealsFromDB, getMealsFromDB, deleteMealFromDB } from "@/src/lib/mealService";
 
 export default function DashboardPage() {
   const [meals, setMeals] = useState<Meal[]>([]);
@@ -29,30 +30,46 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    setMeals(getMeals());
-  }, []);
-  
-  const loadMeals = () => setMeals(getMeals());
+    async function loadMeals() {
+      const data = await getMealsFromDB();
+      setMeals(data || []);
+    }
 
-  useEffect(() => {
     loadMeals();
   }, []);
 
-  const handleDelete = (id: number) => {
-    const confirmDelete = confirm("Delete this meal?");
-    if (!confirmDelete) return;
+  const handleDelete = async (id: number) => {
+    await deleteMealFromDB(id);
 
-    deleteMeal(id);
-    loadMeals();
+    const updated = await getMealsFromDB();
+    setMeals(updated || []);
   };
 
-  const handleClearAll = () => {
-    const confirmClear = confirm("Clear all meals?");
-    if (!confirmClear) return;
+  // const handleDelete = (id: number) => {
+  //   const confirmDelete = confirm("Delete this meal?");
+  //   if (!confirmDelete) return;
 
-    clearMeals();
-    loadMeals();
+  //   deleteMeal(id);
+  //   loadMeals();
+  // };
+
+  const handleClearAll = async () => {
+    const confirmed = confirm("Delete all your meals?");
+
+    if (!confirmed) return;
+
+    await clearAllMealsFromDB();
+    setMeals([]);
   };
+
+
+  // const handleClearAll = () => {
+  //   const confirmClear = confirm("Clear all meals?");
+  //   if (!confirmClear) return;
+
+  //   clearMeals();
+  //   loadMeals();
+  // };
 
   return (
     <div>
@@ -76,9 +93,9 @@ export default function DashboardPage() {
             {meals.length > 0 && (
               <button
                 onClick={handleClearAll}
-                className="border rounded-lg px-4 py-2"
+                className="rounded-xl bg-red-500 px-4 py-2 text-white"
               >
-                Clear All
+                Clear All Meals
               </button>
             )}
             {meals.length === 0 ? (

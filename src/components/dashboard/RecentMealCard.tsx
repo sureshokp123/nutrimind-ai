@@ -14,7 +14,14 @@ export default function RecentMealCard({ meal, onDelete }: Props) {
         <p>{meal.calories} kcal</p>
         <p>{meal.protein} g protein</p>
         <p className="text-sm text-gray-500">{meal.time}</p>
-      </div>
+        {meal.image_url && (
+        <img
+          src={meal.image_url}
+          alt={meal.name}
+          className="h-40 w-full rounded-xl object-cover"
+        />
+      )}
+      </div>     
 
       <button
         onClick={() => onDelete?.(meal.id)}
