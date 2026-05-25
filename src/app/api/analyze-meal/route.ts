@@ -15,10 +15,6 @@ export async function POST(req: Request) {
         const genAI = new GoogleGenerativeAI(
             process.env.GEMINI_API_KEY
         );
-        // const modelNames = [
-        //     "gemini-2.5-flash",
-        //     "gemini-2.0-flash-lite",
-        // ];
 
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash"
@@ -51,31 +47,6 @@ export async function POST(req: Request) {
             }
         }
 
-        //         const result = await model.generateContent([
-        //             {
-        //                 inlineData: {
-        //                     data: base64,
-        //                     mimeType: "image/jpeg",
-        //                 },
-        //             },
-        //             {
-        //                 text: `
-        // Identify this meal image.
-        // Return ONLY raw JSON.
-        // No markdown.
-        // No backticks.
-
-        // {
-        //    "name": "food name",
-        //   "calories": 0,
-        //   "protein": 0,
-        //   "carbs": 0,
-        //   "fat": 0,
-        //   "fiber": 0
-        // }
-        //         `,
-        //             },
-        //         ]);
         const result = await analyzeWithRetry(model, [
             {
                 inlineData: {

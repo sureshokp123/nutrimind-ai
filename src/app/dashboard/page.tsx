@@ -62,15 +62,6 @@ export default function DashboardPage() {
     setMeals([]);
   };
 
-
-  // const handleClearAll = () => {
-  //   const confirmClear = confirm("Clear all meals?");
-  //   if (!confirmClear) return;
-
-  //   clearMeals();
-  //   loadMeals();
-  // };
-
   return (
     <div>
       <Navbar />
